@@ -12,11 +12,11 @@ switch ($method) {
         $rating = $_GET['rating'] ?? 'all';
 
         if ($rating === 'all') {
-            $sql = "SELECT id, name, role, message, image, rating, created_at, updated_at 
+            $sql = "SELECT id, name, message, rating, approved, created_at, updated_at 
                     FROM testimonials ORDER BY id DESC";
             $result = $conn->query($sql);
         } else {
-            $stmt = $conn->prepare("SELECT id, name, role, message, image, rating, created_at, updated_at 
+            $stmt = $conn->prepare("SELECT id, name, message, rating, approved, created_at, updated_at 
                                     FROM testimonials WHERE rating = ? ORDER BY id DESC");
             $stmt->bind_param("i", $rating);
             $stmt->execute();
@@ -37,15 +37,14 @@ switch ($method) {
         }
 
         $name    = $data['name'];
-        $role    = $data['role'] ?? null;
         $message = $data['message'];
-        $image   = $data['image'] ?? null;
         $rating  = isset($data['rating']) ? (int)$data['rating'] : null;
+        $approved = isset($data['approved']) ? (int)$data['approved'] : 0;
 
         $stmt = $conn->prepare(
-            "INSERT INTO testimonials (name, role, message, image, rating) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO testimonials (name, message, rating, approved) VALUES (?, ?, ?, ?)"
         );
-        $stmt->bind_param("ssssi", $name, $role, $message, $image, $rating);
+        $stmt->bind_param("ssii", $name, $message, $rating, $approved);
 
         if ($stmt->execute()) {
             echo json_encode(['message' => 'Testimonial created', 'id' => $stmt->insert_id]);
@@ -68,6 +67,21 @@ switch ($method) {
 
         $data = json_decode(file_get_contents("php://input"), true);
 
+        // --- Toggle-only update ---
+        if (isset($data['approved']) && count($data) === 1) {
+            $approved = (int)$data['approved'];
+            $stmt = $conn->prepare("UPDATE testimonials SET approved=? WHERE id=?");
+            $stmt->bind_param("ii", $approved, $id);
+            if ($stmt->execute()) {
+                echo json_encode(['message' => 'Visibility updated']);
+            } else {
+                http_response_code(500);
+                echo json_encode(['error' => $stmt->error]);
+            }
+            break;
+        }
+
+        // --- Full update ---
         if (!isset($data['name'], $data['message'])) {
             http_response_code(400);
             echo json_encode(['error' => 'Missing required fields: name, message']);
@@ -75,15 +89,14 @@ switch ($method) {
         }
 
         $name    = $data['name'];
-        $role    = $data['role'] ?? null;
         $message = $data['message'];
-        $image   = $data['image'] ?? null;
         $rating  = isset($data['rating']) ? (int)$data['rating'] : null;
+        $approved = isset($data['approved']) ? (int)$data['approved'] : 0;
 
         $stmt = $conn->prepare(
-            "UPDATE testimonials SET name=?, role=?, message=?, image=?, rating=? WHERE id=?"
+            "UPDATE testimonials SET name=?, message=?, rating=?, approved=? WHERE id=?"
         );
-        $stmt->bind_param("ssssii", $name, $role, $message, $image, $rating, $id);
+        $stmt->bind_param("ssiii", $name, $message, $rating, $approved, $id);
 
         if ($stmt->execute()) {
             echo json_encode(['message' => 'Testimonial updated']);

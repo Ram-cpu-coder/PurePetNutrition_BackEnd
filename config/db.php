@@ -3,23 +3,15 @@ require_once __DIR__ . '/config.php';
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-// CORS: Allow only specific origins
-$allowedOrigins = [
-    'http://127.0.0.1:5500',
-    'https://ram-cpu-coder.github.io/Static_PurePetNutrition'
-];
-
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+// ✅ Allow all origins for CORS
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, X-CSRF-Token");
 
 // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    if (in_array($origin, $allowedOrigins)) {
-        header("Access-Control-Allow-Origin: $origin");
-        header("Access-Control-Allow-Credentials: true");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, X-CSRF-Token");
-    }
-    exit(0);
+    exit(0); // Respond with headers only, no body
 }
 
 try {
@@ -47,19 +39,10 @@ try {
 
     $conn->set_charset('utf8mb4');
 
-    // Apply CORS headers for actual requests
-    if (in_array($origin, $allowedOrigins)) {
-        header("Access-Control-Allow-Origin: $origin");
-        header("Access-Control-Allow-Credentials: true");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, X-CSRF-Token");
-    }
-
     // Optional dev confirmation
     if (APP_ENV === 'local') {
         echo "Connected securely to Azure MySQL!";
     }
-
 
 } catch (mysqli_sql_exception $e) {
     http_response_code(500);

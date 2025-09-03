@@ -51,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+
 $res = $conn->query("SELECT id, title, category, description, image FROM blogs ORDER BY id DESC");
 $rows = $res ? $res->fetch_all(MYSQLI_ASSOC) : [];
 

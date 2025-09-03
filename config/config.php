@@ -1,9 +1,14 @@
-<?php
-define('APP_ENV', 'local'); // local | production
-define('DB_HOST', '127.0.0.1');
-define('DB_USER', 'root');
-define('DB_PASS', 'Gom@magar85129208');
-define('DB_NAME', 'purepet');
 
-define('ALLOWED_ORIGIN', '*'); // frontend origin 
-define('CSRF_ENABLED', true);  // CSRF token 
+<?php
+// Environment
+define('APP_ENV', getenv('APP_ENV') ?: 'production');
+
+// Database credentials
+define('DB_HOST', getenv('DB_HOST'));
+define('DB_USER', getenv('DB_USER'));
+define('DB_PASS', getenv('DB_PASS'));
+define('DB_NAME', getenv('DB_NAME'));
+
+// Security
+define('ALLOWED_ORIGIN', getenv('ALLOWED_ORIGIN') ?: '*');
+define('CSRF_ENABLED', true);

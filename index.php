@@ -4,11 +4,11 @@ echo json_encode([
     'status' => 'Backend API is running',
     'version' => '1.0',
     'endpoints' => [
-        'login' => '/backend/api/auth/login.php',
-        'logout' => '/backend/api/auth/logout.php',
-        'csrf_token' => '/backend/api/auth/csrf_token.php',
-        'products' => '/backend/api/products.php',
-        'blogs' => '/backend/api/blogs.php',
-        'testimonials' => '/backend/api/testimonials.php'
+        'login' => '/admin/login.php',
+        'logout' => '/admin/logout.php',
+        'csrf_token' => '/api/auth/csrf_token.php',
+        'products' => '/admin/products.php',
+        'blogs' => '/admin/blogs.php',
+        'testimonials' => '/admin/testimonials.php'
     ]
 ]);

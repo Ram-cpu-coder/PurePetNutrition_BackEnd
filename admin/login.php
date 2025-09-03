@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 if (isset($_SESSION['uid'])) {
-    header("Location: /backend/admin/dashboard.php");
+    header("Location: /admin/dashboard.php");
     exit;
 }
 require_once '../config/db.php';

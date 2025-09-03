@@ -3,22 +3,37 @@ require_once __DIR__ . '/config.php';
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
+// CORS: Allow only specific origins
+$allowedOrigins = [
+    'http://127.0.0.1:5500',
+    'https://ram-cpu-coder.github.io/Static_PurePetNutrition'
+];
+
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    if (in_array($origin, $allowedOrigins)) {
+        header("Access-Control-Allow-Origin: $origin");
+        header("Access-Control-Allow-Credentials: true");
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+        header("Access-Control-Allow-Headers: Content-Type, X-CSRF-Token");
+    }
+    exit(0);
+}
+
 try {
     // Path to SSL certificate
     $certPath = __DIR__ . '/certs/BaltimoreCyberTrustRoot.crt.pem';
 
-    // Check if certificate exists
     if (!file_exists($certPath)) {
         throw new Exception("SSL certificate not found at: " . $certPath);
     }
 
-    // Initialize mysqli
+    // Initialize mysqli with SSL
     $conn = mysqli_init();
-
-    // Set SSL options
     mysqli_ssl_set($conn, NULL, NULL, $certPath, NULL, NULL);
 
-    // Connecting with SSL and don't verify server cert (avoids Windows issues)
     mysqli_real_connect(
         $conn,
         DB_HOST,
@@ -30,21 +45,21 @@ try {
         MYSQLI_CLIENT_SSL | MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT
     );
 
-    // Set charset
     $conn->set_charset('utf8mb4');
 
-    //  CORS header
-    if (isset($_SERVER['HTTP_ORIGIN'])) {
-        header("Access-Control-Allow-Origin: " . ALLOWED_ORIGIN);
+    // Apply CORS headers for actual requests
+    if (in_array($origin, $allowedOrigins)) {
+        header("Access-Control-Allow-Origin: $origin");
         header("Access-Control-Allow-Credentials: true");
         header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
         header("Access-Control-Allow-Headers: Content-Type, X-CSRF-Token");
     }
 
-    // connection confirmation for development
+    // Optional dev confirmation
     if (APP_ENV === 'local') {
         echo "Connected securely to Azure MySQL!";
     }
+
 
 } catch (mysqli_sql_exception $e) {
     http_response_code(500);

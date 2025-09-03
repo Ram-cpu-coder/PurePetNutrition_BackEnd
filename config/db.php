@@ -3,8 +3,10 @@ require_once __DIR__ . '/config.php';
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-if (isset($_SERVER['HTTP_ORIGIN']) && ALLOWED_ORIGIN) {
-    header("Access-Control-Allow-Origin: " . ALLOWED_ORIGIN);
+// Allow local origin for testing, or use env variable
+$origin = $_SERVER['HTTP_ORIGIN'];
+if ($origin === 'http://127.0.0.1:5500' || $origin === 'http://localhost:5500' || ALLOWED_ORIGIN) {
+    header("Access-Control-Allow-Origin: " . ($origin ?: ALLOWED_ORIGIN));
     header("Access-Control-Allow-Credentials: true");
     header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, X-CSRF-Token");
@@ -39,7 +41,7 @@ try {
         echo "Connected securely to Azure MySQL!";
     }
 
-    return $conn; // Return connection for use
+    return $conn;
 } catch (mysqli_sql_exception $e) {
     http_response_code(500);
     echo "Database connection failed: " . $e->getMessage();

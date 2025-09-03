@@ -3,14 +3,11 @@ require_once __DIR__ . '/config.php';
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-// Allow local origin for testing, or use env variable
-$origin = $_SERVER['HTTP_ORIGIN'];
-if ($origin === 'http://127.0.0.1:5500' || $origin === 'http://localhost:5500' || ALLOWED_ORIGIN) {
-    header("Access-Control-Allow-Origin: " . ($origin ?: ALLOWED_ORIGIN));
-    header("Access-Control-Allow-Credentials: true");
-    header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, X-CSRF-Token");
-}
+// Hardcode CORS for local testing
+header("Access-Control-Allow-Origin: http://127.0.0.1:5500");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, X-CSRF-Token");
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
@@ -37,17 +34,21 @@ try {
     );
     $conn->set_charset('utf8mb4');
 
-    if (APP_ENV === 'local') {
-        echo "Connected securely to Azure MySQL!";
+    $result = $conn->query("SELECT * FROM products");
+    if (!$result) {
+        echo json_encode(["error" => "Query failed: " . $conn->error]);
+        exit;
     }
-
-    return $conn;
+    $data = $result->fetch_all(MYSQLI_ASSOC);
+    header('Content-Type: application/json');
+    echo json_encode($data);
+    exit;
 } catch (mysqli_sql_exception $e) {
     http_response_code(500);
-    echo "Database connection failed: " . $e->getMessage();
+    echo json_encode(["error" => "Database connection failed: " . $e->getMessage()]);
     exit;
 } catch (Exception $e) {
     http_response_code(500);
-    echo "Error: " . $e->getMessage();
+    echo json_encode(["error" => "Error: " . $e->getMessage()]);
     exit;
 }

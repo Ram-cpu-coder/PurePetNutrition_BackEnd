@@ -1,4 +1,6 @@
 <?php
+
+require_once "../../config/cors.php";
 require_once __DIR__ . '/../_bootstrap.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

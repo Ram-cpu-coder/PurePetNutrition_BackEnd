@@ -1,5 +1,5 @@
 <?php
-$allowedOrigins = ['http://127.0.0.1:5500','http://localhost:8080', 'https://frontend.com'];
+$allowedOrigins = ['http://127.0.0.1:5500','http://localhost:8080', 'https://ram-cpu-coder.github.io/Static_PurePetNutrition'];
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 if (in_array($origin, $allowedOrigins)) {

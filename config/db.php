@@ -1,6 +1,8 @@
+
+
+
 <?php
-require_once __DIR__ . '/load_env.php';
-require_once __DIR__ . '/config.php';
+require_once _DIR_ . '/config.php';
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
@@ -16,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 try {
-    $certPath = __DIR__ . '/certs/BaltimoreCyberTrustRoot.crt.pem';
+    $certPath = _DIR_ . '/certs/BaltimoreCyberTrustRoot.crt.pem';
     if (!file_exists($certPath)) {
         throw new Exception("SSL certificate not found at: " . $certPath);
     }
@@ -34,16 +36,6 @@ try {
         MYSQLI_CLIENT_SSL | MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT
     );
     $conn->set_charset('utf8mb4');
-
-    $result = $conn->query("SELECT * FROM products");
-    if (!$result) {
-        echo json_encode(["error" => "Query failed: " . $conn->error]);
-        exit;
-    }
-    $data = $result->fetch_all(MYSQLI_ASSOC);
-    header('Content-Type: application/json');
-    // echo json_encode($data);
-    exit;
 } catch (mysqli_sql_exception $e) {
     http_response_code(500);
     echo json_encode(["error" => "Database connection failed: " . $e->getMessage()]);

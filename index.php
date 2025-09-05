@@ -1,8 +1,5 @@
-
-
 <?php
-
-
+echo 'hello world';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }

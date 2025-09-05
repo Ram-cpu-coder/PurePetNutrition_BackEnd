@@ -33,6 +33,8 @@ try {
         MYSQLI_CLIENT_SSL | MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT
     );
     $conn->set_charset('utf8mb4');
+    echo "conn";
+    print_r($conn);
 } catch (mysqli_sql_exception $e) {
     http_response_code(500);
     echo json_encode(["error" => "Database connection failed: " . $e->getMessage()]);

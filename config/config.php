@@ -1,7 +1,7 @@
 
 <?php
 // Environment
-define('APP_ENV', getenv('APP_ENV') ?: 'production');
+define('APP_ENV', getenv('APP_ENV') ?: 'local');
 
 // Database credentials
 define('DB_HOST', getenv('DB_HOST'));

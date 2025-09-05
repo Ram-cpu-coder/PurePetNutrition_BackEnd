@@ -9,7 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/utils/response.php';
 require_once __DIR__ . '/utils/validate.php';
-require_once __DIR__ . '/auth/auth_check.php'; 
+// require_once __DIR__ . '/auth/auth_check.php'; 
 
 // CORS headers
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '*';

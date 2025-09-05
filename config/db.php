@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/load_env.php';
 require_once __DIR__ . '/config.php';
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
@@ -41,7 +42,7 @@ try {
     }
     $data = $result->fetch_all(MYSQLI_ASSOC);
     header('Content-Type: application/json');
-    echo json_encode($data);
+    // echo json_encode($data);
     exit;
 } catch (mysqli_sql_exception $e) {
     http_response_code(500);

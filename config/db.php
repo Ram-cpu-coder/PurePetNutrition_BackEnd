@@ -1,8 +1,5 @@
-
-
-
 <?php
-require_once _DIR_ . '/config.php';
+require_once __DIR__ . '/config.php';
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
@@ -18,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 try {
-    $certPath = _DIR_ . '/certs/BaltimoreCyberTrustRoot.crt.pem';
+    $certPath = __DIR__ . '/certs/BaltimoreCyberTrustRoot.crt.pem';
     if (!file_exists($certPath)) {
         throw new Exception("SSL certificate not found at: " . $certPath);
     }
